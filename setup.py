@@ -13,7 +13,7 @@ def create_datafiles():
             (join('share/',  package_name, "config"), glob("config/*.*")),
             ('share/' + package_name, ['package.xml']),
             ]
-    for complex_path in ["robot_description"]:
+    for complex_path in ["robot_description", "models"]:
         res = get_all_files_in_path(glob_string=f"{complex_path}/**/*.*", path_string=join("share",package_name))
         df.extend(res) 
     return df

@@ -12,6 +12,12 @@
     </xacro:ur_robot>
     <link name="world" />
 
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro" />
+    <!-- Including realsense description from external package -->
+    <xacro:sensor_d435i parent="ur5_base_link" name="sensor_d435i" use_nominal_extrinsics="True">
+        <origin xyz="-1 -1 0.5" rpy="0 0 ${pi/4}"/>
+    </xacro:sensor_d435i>
+
     <joint name="gripper_joint" type="fixed">
         <parent link="ur5_tool0" />
         <child link="gripper_base_link" />
@@ -74,6 +80,40 @@
         <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
             <parameters>$(find maciv2)/config/ros2_controllers.yaml</parameters>
         </plugin>
+        <plugin filename="ignition-gazebo-sensors-system" name="ignition::gazebo::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+    </gazebo>
+    <gazebo reference="sensor_d435i_link">
+        <sensor name="realsense_d435" type="rgbd_camera">
+            <topic>realsense</topic>
+            <ignition_frame_id>sensor_d435i_link</ignition_frame_id>
+            <update_rate>5</update_rate>
+            <camera name="camera">
+                <horizontal_fov>1.5</horizontal_fov>
+
+                <image>
+                    <width>320</width>
+                    <height>240</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.01</near>
+                    <far>10</far>
+                </clip>
+                <depth_camera>
+                    <clip>
+                        <near>0.1</near>
+                        <far>10</far>
+                    </clip>
+                </depth_camera>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+        </sensor>
     </gazebo>
 
 </robot>
